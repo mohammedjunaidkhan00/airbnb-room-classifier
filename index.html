@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Airbnb Room Type Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Ambient Background Animations -->
+    <div class="bg-animation">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <!-- <div class="logo-badge"><i class="fa-brands fa-airbnb"></i> ML Property Classifier</div> -->
+            <h1>NYC Airbnb Listing Predictor</h1>
+            <p>Enter property location, pricing, and host metrics to predict the listing type and class probabilities.
+            </p>
+        </header>
+
+        <main class="form-card">
+            <!-- Quick Demo Presets -->
+            <div class="top-bar">
+                <span class="hint-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Test Presets:</span>
+                <div class="preset-buttons">
+                    <button type="button" class="preset-btn" data-preset="manhattan">Manhattan Apt</button>
+                    <button type="button" class="preset-btn" data-preset="brooklyn">Brooklyn Room</button>
+                    <button type="button" class="preset-btn" data-preset="queens">Queens Budget</button>
+                </div>
+            </div>
+
+            <form id="predictionForm">
+                <!-- Section 1: Location Details -->
+                <h3 class="section-title"><i class="fa-solid fa-location-dot"></i> Location Details</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="neighbourhood_group">Neighbourhood Group (Borough)</label>
+                        <select id="neighbourhood_group" name="neighbourhood_group" required>
+                            <option value="">Select Borough</option>
+                            <option value="Manhattan">Manhattan</option>
+                            <option value="Brooklyn">Brooklyn</option>
+                            <option value="Queens">Queens</option>
+                            <option value="Bronx">Bronx</option>
+                            <option value="Staten Island">Staten Island</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="neighbourhood">Specific Neighbourhood</label>
+                        <input type="text" id="neighbourhood" name="neighbourhood"
+                            placeholder="e.g. Kensington, Midtown" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="latitude">Latitude (-90 to 90)</label>
+                        <input type="number" id="latitude" name="latitude" step="any" min="-90" max="90"
+                            placeholder="e.g. 40.7128" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="longitude">Longitude (-180 to 180)</label>
+                        <input type="number" id="longitude" name="longitude" step="any" min="-180" max="180"
+                            placeholder="e.g. -74.0060" required>
+                    </div>
+                </div>
+
+                <!-- Section 2: Pricing & Stay Rules -->
+                <h3 class="section-title"><i class="fa-solid fa-tag"></i> Pricing & Availability</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="price">Price Per Night ($)</label>
+                        <input type="number" id="price" name="price" step="0.01" min="0.01" placeholder="e.g. 150.0"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="minimum_nights">Minimum Nights Required</label>
+                        <input type="number" id="minimum_nights" name="minimum_nights" min="1" step="1"
+                            placeholder="e.g. 2" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="availability_365">Availability (Days/Year: 0-365)</label>
+                        <input type="number" id="availability_365" name="availability_365" min="0" max="365" step="1"
+                            placeholder="e.g. 180" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="calculated_host_listings_count">Host Total Listings Count</label>
+                        <input type="number" id="calculated_host_listings_count" name="calculated_host_listings_count"
+                            min="1" step="1" placeholder="e.g. 4" required>
+                    </div>
+                </div>
+
+                <!-- Section 3: Review Metrics -->
+                <h3 class="section-title"><i class="fa-solid fa-star"></i> Engagement & Reviews</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="number_of_reviews">Total Number of Reviews</label>
+                        <input type="number" id="number_of_reviews" name="number_of_reviews" min="0" step="1"
+                            placeholder="e.g. 125" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviews_per_month">Reviews Per Month</label>
+                        <input type="number" id="reviews_per_month" name="reviews_per_month" min="0" step="0.01"
+                            placeholder="e.g. 3.5" required>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="buttons">
+                    <button type="submit" class="action-btn predict-btn" id="predictBtn">
+                        <i class="fa-solid fa-bolt"></i> Predict Listing Type
+                    </button>
+                    <button type="reset" class="action-btn reset-btn">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </form>
+
+            <!-- Error Alert -->
+            <div class="error-box" id="errorBox"></div>
+
+            <!-- Prediction Output Section -->
+            <div class="result-box" id="resultBox">
+                <div class="result-header">
+                    <span class="result-label">Predicted Classification</span>
+                    <h2 class="prediction-title" id="predictionValue">--</h2>
+                </div>
+
+                <div class="probabilities-container">
+                    <h4>Class Confidence Breakdown</h4>
+                    <div id="probabilityBars"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Built by <strong>Mohammed Junaid Khan</strong></p>
+            <div class="social-links">
+                <a href="https://github.com/mohammedjunaidkhan00" target="_blank" aria-label="GitHub">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/mohammed-junaid-khan-74abb9320" target="_blank" aria-label="LinkedIn">
+                    <i class="fa-brands fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="mailto:mohammedjunaidkhan00@gmail.com" aria-label="Email">
+                    <i class="fa-solid fa-envelope"></i> Email
+                </a>
+                <a href="https://portfolio-zs5h.onrender.com" target="_blank" aria-label="Portfolio">
+                    <i class="fa-solid fa-globe"></i> Portfolio
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
