@@ -1,6 +1,6 @@
 // Change this URL if deploying to Render or another server
 // const API_URL = "https://airbnb-room-classifier-1.onrender.com";
-const API_URL = "https://airbnbroomclassifierapi.onrender.com";
+const API_URL = "/predict";
 
 
 const form = document.getElementById("predictionForm");
