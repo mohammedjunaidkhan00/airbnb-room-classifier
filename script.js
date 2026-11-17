@@ -1,5 +1,5 @@
 // Change this URL if deploying to Render or another server
-const API_URL = "http://127.0.0.1:8000/predict";
+const API_URL = "https://airbnb-room-classifier-1.onrender.com";
 
 const form = document.getElementById("predictionForm");
 const predictBtn = document.getElementById("predictBtn");
