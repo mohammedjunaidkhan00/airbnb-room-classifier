@@ -31,6 +31,9 @@ class FeaturesModel(BaseModel):
     
     
 model = joblib.load("model/Model_Pipeline.pkl")
+# Prevent multi-process RAM spike on Render's 512 MB free tier
+if hasattr(model[-1], "n_jobs"):
+  model[-1].n_jobs = 1
 
 
 @app.get("/")
